@@ -13,3 +13,12 @@ class UserResponse(BaseModel):
     city: str
     created_at: datetime
 
+class UsersPage(BaseModel):
+    items: list[UserResponse]
+    limit: int
+    offset: int
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+    city: str | None = None

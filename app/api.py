@@ -1,7 +1,5 @@
 from  fastapi import APIRouter, Depends, Query
-from fastapi import HTTPException, Request
-from fastapi.responses import JSONResponse
-from .schemas import UserCreate, UserResponse
+from .schemas import UserCreate, UserResponse, UsersPage, UserUpdate
 from .db import get_repo
 from .repo import (
     UserRepository,
@@ -13,12 +11,12 @@ from .repo import (
 
 router = APIRouter()
 
-@router.post("/users", response_model=UserResponse)
+@router.post("/users", response_model=UserResponse, status_code=201)
 def create_user(user: UserCreate, repo: UserRepository = Depends(get_repo)):
     created = repo.add_user(user.name, user.phone, user.city)
     return created
 
-@router.get("/users", response_model=list[UserResponse])
+@router.get("/users", response_model=UsersPage)
 def list_users(
     search: str | None = None,
     limit: int = Query(default=10, ge=1, le=100),
@@ -30,7 +28,11 @@ def list_users(
     else:
         users = repo.list_users(limit, offset)
 
-    return users
+    return {
+        "items": users,
+        "limit": limit,
+        "offset": offset
+    }
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, repo: UserRepository = Depends(get_repo)):
@@ -44,11 +46,15 @@ def delete_user(user_id: int, repo: UserRepository = Depends(get_repo)):
         return user
 
 
-@router.put("/users/{user_id}", response_model=UserResponse)
+@router.patch("/users/{user_id}", response_model=UserResponse)
 def update_user(
     user_id:int,
-    user: UserCreate,
+    user: UserUpdate,
     repo: UserRepository = Depends(get_repo)
 ):
-        updated = repo.update_user(user_id, user.name, user.phone, user.city)
-        return updated
+    current = repo.get_user(user_id)
+    name = user.name if user.name is not None else current["name"]
+    phone = user.phone if user.phone is not None else current["phone"]
+    city = user.city if user.city is not None else current["city"]
+    updated = repo.update_user(user_id, name, phone, city)
+    return updated
