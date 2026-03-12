@@ -1,7 +1,8 @@
-from  fastapi import APIRouter, Depends, Query
-from .schemas import UserCreate, UserResponse, UsersPage, UserUpdate
-from .db import get_repo
-from .repo import (
+from fastapi import APIRouter, Depends, Query
+
+from ..schemas.users import UserCreate, UserResponse, UsersPage, UserUpdate
+from ..core.db import get_repo
+from ..repositories.users import (
     UserRepository,
     RepoError,
     UniqueViolationError,

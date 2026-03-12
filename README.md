@@ -1,63 +1,41 @@
-# Project 3 — User Registry API (FastAPI + PostgreSQL)
+# User Registry API (FastAPI + PostgreSQL)
 
-REST API service for managing users using **FastAPI** and **PostgreSQL**.
-This project continues the previous CLI version and demonstrates how to build a backend service with:
-* REST API
-* PostgreSQL storage
-* Repository pattern
-* Dependency Injection
-* Pagination
-* Search
-* Error handling
+Simple REST API for managing users.
 
-# Tech Stack
-* Python 3.10+
+This project demonstrates a basic backend architecture using:
+
 * FastAPI
 * PostgreSQL
-* psycopg (v3)
-* Pydantic
-* Uvicorn
+* Repository pattern
+* Pydantic schemas
+* Dependency Injection
 
-# Project Structure
+The API supports full CRUD operations, search, and pagination.
+
+---
+
+## Project Structure
 
 ```
-project_3_user_registry_api
-│
-├── app
-│   ├── api.py        # API endpoints
-│   ├── repo.py       # database queries (repository layer)
-│   ├── schemas.py    # Pydantic models
-│   ├── db.py         # repository dependency
-│   └── main.py       # FastAPI application
-│
-├── requirements.txt
-├── README.md
-└── .gitignore
+app/
+├── core/
+│   └── db.py
+├── repositories/
+│   └── users.py
+├── routers/
+│   └── users.py
+├── schemas/
+│   └── users.py
+└── main.py
 ```
 
 ---
 
-# Installation
+## Requirements
 
-### 1. Clone repository
+Python 3.10+
 
-```
-git clone <your_repo_url>
-cd project_3_user_registry_api
-```
-
----
-
-### 2. Create virtual environment
-
-```
-python3 -m venv venv
-source venv/bin/activate
-```
-
----
-
-### 3. Install dependencies
+Install dependencies:
 
 ```
 pip install -r requirements.txt
@@ -65,7 +43,7 @@ pip install -r requirements.txt
 
 ---
 
-# Database Setup
+## Database
 
 Create database:
 
@@ -73,33 +51,29 @@ Create database:
 createdb user_registry
 ```
 
-Or in PostgreSQL:
-
-```
-CREATE DATABASE user_registry;
-```
-
 Apply schema:
 
 ```
-psql -U stepan -d user_registry -h localhost -f schema.sql
+psql -U postgres -d user_registry -f schema.sql
 ```
 
 ---
 
-# Environment Variables
+## Environment Variable
 
-Set database connection string:
+The application expects a DSN string in an environment variable.
+
+Example:
 
 ```
-export USER_REGISTRY_DSN="host=localhost port=5432 dbname=user_registry user=stepan password=YOUR_PASSWORD"
+export USER_REGISTRY_DSN="host=localhost port=5432 dbname=user_registry user=postgres password=yourpassword"
 ```
 
 ---
 
-# Running the API
+## Run the API
 
-Start the server:
+From project root:
 
 ```
 uvicorn app.main:app --reload
@@ -111,137 +85,82 @@ Server will start at:
 http://127.0.0.1:8000
 ```
 
----
-
-# API Documentation
-
-Interactive documentation is available at:
+Swagger documentation:
 
 ```
 http://127.0.0.1:8000/docs
 ```
 
-Swagger UI allows testing all endpoints directly from the browser.
-
 ---
 
-# API Endpoints
+## Endpoints
 
 ### Create user
 
-```
 POST /users
-```
-
-Body:
 
 ```
 {
   "name": "Ivan",
-  "phone": "+77001231231",
+  "phone": "+77001234567",
   "city": "Almaty"
 }
 ```
 
 ---
 
-### List users
+### Get users
 
-```
 GET /users
-```
 
-Supports:
-
-```
-?search=
-?limit=
-?offset=
-```
-
-Example:
+Query parameters:
 
 ```
-GET /users?limit=10&offset=0
+search
+limit
+offset
 ```
 
 ---
 
-### Get user by ID
+### Get user by id
 
-```
-GET /users/{user_id}
-```
+GET /users/{id}
 
 ---
 
 ### Update user
 
-```
-PUT /users/{user_id}
-```
+PUT /users/{id}
+
+---
+
+### Partial update
+
+PATCH /users/{id}
 
 ---
 
 ### Delete user
 
-```
-DELETE /users/{user_id}
-```
+DELETE /users/{id}
 
 ---
 
-# Example Requests (CLI)
+## Features
 
-Get users:
-
-```
-curl http://127.0.0.1:8000/users | python3 -m json.tool
-```
-
-Search:
-
-```
-curl "http://127.0.0.1:8000/users?search=ivan"
-```
-
-Create user:
-
-```
-curl -X POST http://127.0.0.1:8000/users \
--H "Content-Type: application/json" \
--d '{"name":"Alex","phone":"+79990000003","city":"Berlin"}'
-```
+* PostgreSQL storage
+* Repository pattern
+* Pagination (limit / offset)
+* Search by name / phone / city
+* Partial updates
+* Swagger documentation
 
 ---
 
-# Architecture
-
-The application follows a layered architecture.
-
-### API Layer
-
-Handles:
-
-* HTTP requests
-* input validation
-* response serialization
-
-### Repository Layer
-
-Responsible for:
-
-* database access
-* SQL queries
-* translating database errors
-
-### Database
-
-PostgreSQL stores user data.
-
----
-
-# Author
+## Author
 
 Stepan Salmin
-Backend learning project (Python + PostgreSQL)
+
+Backend learning project (FastAPI + PostgreSQL)
+

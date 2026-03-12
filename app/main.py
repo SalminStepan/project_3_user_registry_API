@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
-from .api import router
 from fastapi.responses import JSONResponse
-from .repo import RepoError, NotFoundError, UniqueViolationError
+from .routers.users import router
+from .repositories.users import RepoError, NotFoundError, UniqueViolationError
 
 app = FastAPI()
 

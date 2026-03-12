@@ -1,5 +1,5 @@
 import os
-from .repo import UserRepository
+from ..repositories.users import UserRepository
 
 def get_repo():
     dsn = os.getenv("USER_REGISTRY_DSN")
